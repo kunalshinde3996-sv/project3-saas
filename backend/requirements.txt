@@ -7,3 +7,8 @@ psycopg2-binary
 python-dotenv
 sqlalchemy
 python-multipart
+langchain
+langchain-openai
+duckdb
+pandas
+scipy
