@@ -28,3 +28,51 @@ export interface DataRecord {
   data: Record<string, unknown>;
   created_at: string;
 }
+
+export type PlanTier = "free" | "pro" | "enterprise";
+
+export interface Subscription {
+  plan: PlanTier;
+  status?: string;
+}
+
+export const PLAN_ORDER: PlanTier[] = [
+  "free",
+  "pro",
+  "enterprise",
+];
+
+export type WidgetType =
+  | "bar"
+  | "line"
+  | "pie"
+  | "scatter"
+  | "heatmap"
+  | "funnel"
+  | "table";
+
+export interface Widget {
+  id: string;
+  title: string;
+  type: WidgetType;
+  connector_id?: string;
+  query?: string;
+  data?: any[];
+  sql?: string;
+  isLoading?: boolean;
+  error?: string;
+}
+
+export interface WidgetLayout {
+  i: string;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  minW?: number;
+  minH?: number;
+}
+
+export interface DashboardFilters {
+  search: string;
+}
