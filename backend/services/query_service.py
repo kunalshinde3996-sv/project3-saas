@@ -7,7 +7,7 @@ import pandas as pd
 from scipy import stats
 from sqlalchemy.orm import Session
 from langchain_groq import ChatGroq
-from langchain.messages import AIMessage, HumanMessage, SystemMessage
+from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 
 from models.connector import Connector, DataRecord
 
@@ -15,7 +15,7 @@ from models.connector import Connector, DataRecord
 class ConversationBufferMemory:
     def __init__(self, return_messages: bool = True):
         self.return_messages = return_messages
-        self.messages: list[HumanMessage | AIMessage | SystemMessage] = []
+        self.messages: list = []
 
     @property
     def chat_memory(self) -> "ConversationBufferMemory":
@@ -66,7 +66,7 @@ Return ONLY the raw SQL query. No explanation, no markdown code fences."""
 
 
 def generate_sql(question: str, columns: list[str], memory: ConversationBufferMemory) -> str:
-    llm = ChatGroq(model="llama-3.1-8b-instant", temperature=0, api_key=os.getenv("GROQ_API_KEY"))
+    llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0, api_key=os.getenv("GROQ_API_KEY"))
 
     history_msgs = memory.chat_memory.messages[-6:]
     messages = [
