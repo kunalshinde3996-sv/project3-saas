@@ -3,7 +3,7 @@ import axios from "axios";
 import { getToken, removeToken } from "@/lib/auth";
 
 export const api = axios.create({
-  baseURL: "http://localhost:8000",
+ baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000",
 });
 
 api.interceptors.request.use((config) => {
