@@ -1,31 +1,18 @@
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { isLoggedIn } from '@/lib/auth';
+import DashboardLayout from '@/components/layout/DashboardLayout';
 
-import { isLoggedIn, removeToken } from "@/lib/auth";
-import DashboardLayout from "@/components/layout/DashboardLayout";
-
-export default function Layout({ children }: { children: ReactNode }) {
+export default function Layout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const [isAuthChecked, setIsAuthChecked] = useState(false);
 
   useEffect(() => {
     if (!isLoggedIn()) {
-      router.replace("/login");
-      return;
+      router.push('/login');
     }
-    setIsAuthChecked(true);
   }, [router]);
 
-  function handleLogout() {
-    removeToken();
-    router.push("/login");
-  }
-
-  if (!isAuthChecked) {
-    return null;
-  }
-
-  return <DashboardLayout onLogout={handleLogout}>{children}</DashboardLayout>;
+  return <DashboardLayout>{children}</DashboardLayout>;
 }

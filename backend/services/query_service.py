@@ -6,7 +6,7 @@ import duckdb
 import pandas as pd
 from scipy import stats
 from sqlalchemy.orm import Session
-from langchain_openai import ChatOpenAI
+from langchain_groq import ChatGroq
 from langchain.messages import AIMessage, HumanMessage, SystemMessage
 
 from models.connector import Connector, DataRecord
@@ -22,8 +22,6 @@ class ConversationBufferMemory:
         return self
 
 
-# --- Conversational memory store (per user, kept in process memory) ---
-# key = user id (string), value = ConversationBufferMemory
 _memory_store: dict[str, ConversationBufferMemory] = {}
 
 
@@ -34,7 +32,6 @@ def get_memory(user_id: str) -> ConversationBufferMemory:
 
 
 def get_org_dataframe(db: Session, org_id) -> pd.DataFrame:
-    """Pull every DataRecord across all of this org's connectors into one dataframe."""
     connectors = db.query(Connector).filter(Connector.org_id == org_id).all()
     if not connectors:
         return pd.DataFrame()
@@ -69,9 +66,9 @@ Return ONLY the raw SQL query. No explanation, no markdown code fences."""
 
 
 def generate_sql(question: str, columns: list[str], memory: ConversationBufferMemory) -> str:
-    llm = ChatOpenAI(model="gpt-4o-mini", temperature=0, api_key=os.getenv("OPENAI_API_KEY"))
+    llm = ChatGroq(model="llama-3.1-8b-instant", temperature=0, api_key=os.getenv("GROQ_API_KEY"))
 
-    history_msgs = memory.chat_memory.messages[-6:]  # last ~3 exchanges for follow-ups
+    history_msgs = memory.chat_memory.messages[-6:]
     messages = [
         SystemMessage(content=SQL_SYSTEM_PROMPT + f"\n\nAvailable columns in `data`: {columns}")
     ]
@@ -106,7 +103,6 @@ def run_sql(df: pd.DataFrame, sql: str) -> list[dict]:
 
 
 def detect_anomalies(rows: list[dict]) -> list[dict]:
-    """Adds a `<col>_is_outlier` boolean flag for numeric columns using z-score (|z| > 3)."""
     if not rows:
         return rows
     df = pd.DataFrame(rows)

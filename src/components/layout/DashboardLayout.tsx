@@ -17,9 +17,13 @@ export default function DashboardLayout({
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="flex h-screen overflow-hidden bg-slate-50">
       {/* Desktop Sidebar */}
-      <Sidebar onLogout={onLogout} />
+      <div className="hidden lg:flex lg:flex-shrink-0">
+        <div className="w-72">
+          <Sidebar onLogout={onLogout} />
+        </div>
+      </div>
 
       {/* Mobile Sidebar */}
       <MobileSidebar
@@ -29,10 +33,9 @@ export default function DashboardLayout({
       />
 
       {/* Main Content */}
-      <div className="lg:ml-72">
+      <div className="flex flex-col flex-1 overflow-hidden">
         <Navbar />
-
-        <main className="p-6">
+        <main className="flex-1 overflow-y-auto p-6">
           {children}
         </main>
       </div>
